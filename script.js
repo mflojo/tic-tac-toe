@@ -41,9 +41,29 @@ const Gameboard = () => {
         return board.flat().includes("") ? null : "draw";
     };
 
+    //clear board for new games
+    const resetBoard = () => {
+        board = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ];
+    };
+
     return {
         getBoard,
         placeMarker,
         checkWinner
     };
 };
+
+const Player = (name, marker) => {
+    return {name, marker};
+};
+
+const PlayGame = () => {
+    const gameboard = Gameboard();
+    const player1 = Player("Player 1", "X");
+    const player2 = Player("Player 2", "O");
+    let currentPlayer = player1;
+}
