@@ -19,5 +19,31 @@ const Gameboard = () => {
         return false;
     };
 
+    //need to constantly check if someone has won
+    const checkWinner = () => {
+        const winCondition = [
+            [board[0][0], board[0][1], board[0][2]],
+            [board[1][0], board[1][1], board[1][2]],
+            [board[2][0], board[2][1], board[2][2]],
+            [board[0][0], board[1][0], board[2][0]],
+            [board[0][1], board[1][1], board[2][1]],
+            [board[0][2], board[1][2], board[2][2]],
+            [board[0][0], board[1][1], board[2][2]],
+            [board[0][2], board[1][1], board[2][0]],
+        ];
 
+        for (let line of winCondition) {
+            if (line[0] !== "" && line[0] === line[1] && line[1] === line[2]) {
+                return line[0];
+            }
+        }
+
+        return board.flat().includes("") ? null : "draw";
+    };
+
+    return {
+        getBoard,
+        placeMarker,
+        checkWinner
+    };
 };
