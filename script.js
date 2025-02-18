@@ -64,19 +64,26 @@ const Player = (name, marker) => {
 };
 
 const PlayGame = () => {
-    const gameboard = Gameboard();
+    const board = Gameboard();
     const player1 = Player("Player 1", "X");
     const player2 = Player("Player 2", "O");
     let currentPlayer = player1;
+    let gameOver = false;
 
     const switchTurn = () => {
         currentPlayer = currentPlayer === player1 ? player2 : player1;
     };
 
     const playRound = (row, col) => {
-        if (gameboard.placeMarker(row, col, currentPlayer.marker)) {
-            let winner = gameboard.checkWinner();
+        if (gameOver) {
+            return "Game Over! Start a new game";
+        }
+
+        if (board.placeMarker(row, col, currentPlayer.marker)) {
+            board.printBoard();
+            let winner = board.checkWinner();
             if (winner) {
+                gameOver = true;
                 return winner === "draw" ? "It's a draw, play again!" : `${currentPlayer.name} wins!`;
             }
             switchTurn();
@@ -85,11 +92,34 @@ const PlayGame = () => {
         return "Invalid move, try again";
     };
 
+    const startGame = () => {
+        gameOver = false;
+        console.log("\nGame start! Starting board: ");
+        board.printBoard();
+    };
+
+    const restartGame = () => {
+        board.resetBoard();
+        currentPlayer = player1;
+        gameOver = false;
+        console.log("New game started!\n");
+        startGame();
+    };
+
     return {
         playRound,
-        getBoard: gameboard.getBoard
-    }
+        getBoard: board.getBoard,
+        startGame,
+        restartGame
+    };
 };
 
 const game = PlayGame();
-console.log(game.playRound(0,0));
+game.startGame();
+console.log(game.playRound(0, 0)); 
+console.log(game.playRound(0, 1)); 
+console.log(game.playRound(1, 0)); 
+console.log(game.playRound(1, 1)); 
+console.log(game.playRound(2, 2)); 
+console.log(game.playRound(2, 1));
+console.log(game.restartGame());
