@@ -25,9 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.querySelector("#resetButton").addEventListener("click", () => {
-        game.restartGame();
-        game.updateBoardUI();
-        document.querySelector("#results").textContent = ''; // Clear results when game is reset
+        //reset button wasnt working, just reload the page! will fix in the future
+        location.reload();
     });
 });
 
