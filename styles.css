@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Chewy&display=swap');
+
+.chewy-regular {
+    font-family: "Chewy", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
@@ -9,7 +18,8 @@
 body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    font-size: 1.2rem;
+    font-size: 2rem;
+    font-family: "Chewy", serif;
 }
 
 img, picture, video, canvas, svg {
@@ -37,6 +47,14 @@ h1, h2, h3, h4, h5, h6 {
     isolation: isolate;
 }
 
+body::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: repeating-conic-gradient(from 45deg, #0000 0 25%, #fff 0 50%) 0 / 3em 3em;
+    filter: drop-shadow(0 1px 2px #0003);
+    content: ''
+}
 
 body {
     display: flex;
@@ -55,6 +73,16 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center;
+    background-color: grey;
+    padding: 20px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    width: 200px;
+
 }
 
 #board {
@@ -71,4 +99,17 @@ body {
     align-items: center;
     font-size: 2.5rem;
     cursor: pointer;
+    background-color: rgb(240, 128, 128);
+}
+
+.cell:hover {
+    background-color: rgba(240, 128, 128, 0.8);
+}
+
+#results {
+    background-color: hsl(34, 78%, 91%, .5);
+    border: none;
+    border-radius: 10px;
+    min-height: 50px;
+    margin-top: 20px;
 }
