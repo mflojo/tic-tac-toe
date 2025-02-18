@@ -1,3 +1,43 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const cells = document.querySelectorAll(".cell");
+    const game = PlayGame(); 
+    game.startGame(); 
+
+    cells.forEach(cell => {
+        cell.addEventListener("click", (e) => {
+            const [row, col] = e.target.id.split('').map(Number);
+        
+            console.log(`Current player before move: ${game.currentPlayer.name} with marker ${game.currentPlayer.marker}`);
+        
+            if (!game.gameOver && game.board.placeMarker(row, col, game.currentPlayer.marker)) {
+                e.target.textContent = game.currentPlayer.marker;
+        
+                let winner = game.board.checkWinner();
+                if (winner) {
+                    game.gameOver = true;
+                    displayResult(winner === "draw" ? "It's a draw!" : `${game.currentPlayer.name} wins!`);
+                } else {
+                    game.currentPlayer = game.currentPlayer === game.player1 ? game.player2 : game.player1;
+                    game.updateBoardUI();  
+                }
+            }
+        });
+    });
+
+    document.querySelector("#resetButton").addEventListener("click", () => {
+        game.restartGame();
+        game.updateBoardUI();
+        document.querySelector("#results").textContent = ''; // Clear results when game is reset
+    });
+});
+
+// Function to display the result in the #results div
+function displayResult(resultMessage) {
+    const resultsDiv = document.querySelector("#results");
+    resultsDiv.textContent = resultMessage;
+}
+
+
 const Gameboard = () => {
     let board = [
         ["", "", ""],
@@ -8,7 +48,7 @@ const Gameboard = () => {
     const getBoard = () => board;
 
     const placeMarker = (row, col, marker) => {
-        if (row < 0 || row >=3 || col < 0 || col >= 3) {
+        if (row < 0 || row >= 3 || col < 0 || col >= 3) {
             alert("Invalid position!");
             return false;
         }
@@ -30,26 +70,23 @@ const Gameboard = () => {
              (board[0][2] === board[1][1] && board[1][1] === board[2][0]))) {
             return board[1][1];
         }
-    
+
         return board.some(row => row.includes("")) ? null : "draw";
     };
 
     const resetBoard = () => {
-        board.forEach(row => row.fill(""));
-    };
-
-    const printBoard = () => {
-        console.log("\nCurrent Board:");
-        board.forEach(row => console.log(row.join(" | ")));
-        console.log("\n");
+        board = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ];
     };
 
     return {
         getBoard,
         placeMarker,
         checkWinner,
-        resetBoard,
-        printBoard
+        resetBoard
     };
 };
 
@@ -62,60 +99,48 @@ class Player {
 
 const PlayGame = () => {
     const board = Gameboard();
-    const player1 = new Player("Player 1", "X");
     const player2 = new Player("Player 2", "O");
+    const player1 = new Player("Player 1", "X");
     let currentPlayer = player1;
     let gameOver = false;
 
-    const switchTurn = () => {
-        currentPlayer = currentPlayer === player1 ? player2 : player1;
-    };
-
-    const playRound = (row, col) => {
-        if (gameOver) {
-            return `Game over! ${currentPlayer} won :)`;
-        }
-
-        if (board.placeMarker(row, col, currentPlayer.marker)) {
-            board.printBoard();
-            let winner = board.checkWinner();
-            if (winner) {
-                gameOver = true;
-                return winner === "draw" ? "It's a draw, play again!" : `${currentPlayer.name} wins!`;
-            }
-            switchTurn();
-            return `${currentPlayer.name}'s turn`;
-        }
-        return "Invalid move, try again";
-    };
-
     const startGame = () => {
         gameOver = false;
-        console.log("\nGame start! Starting board: ");
-        board.printBoard();
+        board.resetBoard();
+        updateBoardUI();
     };
 
     const restartGame = () => {
-        board.resetBoard();
-        currentPlayer = player1;
         gameOver = false;
-        return "A new game has started.";
+        currentPlayer = player1;
+        board.resetBoard();
+        updateBoardUI();
+    };
+
+    const updateBoardUI = () => {
+        const cells = document.querySelectorAll(".cell");
+        const boardData = board.getBoard();
+        
+        cells.forEach(cell => {
+            const [row, col] = cell.id.split('').map(Number);
+            const currentContent = cell.textContent; 
+            const newContent = boardData[row][col];
+    
+            if (currentContent !== newContent) {
+                cell.textContent = newContent;
+            }
+        });
     };
 
     return {
-        playRound,
-        getBoard: board.getBoard,
+        board,
+        player1,
+        player2,
+        currentPlayer,
+        gameOver,
         startGame,
-        restartGame
+        restartGame,
+        updateBoardUI,
+        resetBoard: board.resetBoard
     };
 };
-
-const game = PlayGame();
-game.startGame();
-console.log(game.playRound(0, 0)); 
-console.log(game.playRound(0, 1)); 
-console.log(game.playRound(1, 0)); 
-console.log(game.playRound(1, 1)); 
-console.log(game.playRound(2, 2)); 
-console.log(game.playRound(2, 1));
-console.log(game.restartGame());
