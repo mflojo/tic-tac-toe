@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Function to display the result in the #results div
 function displayResult(resultMessage) {
     const resultsDiv = document.querySelector("#results");
     resultsDiv.textContent = resultMessage;
