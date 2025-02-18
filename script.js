@@ -8,6 +8,11 @@ const Gameboard = () => {
     const getBoard = () => board;
 
     const placeMarker = (row, col, marker) => {
+        if (row < 0 || row >=3 || col < 0 || col >= 3) {
+            alert("Invalid position!");
+            return false;
+        }
+
         if (board[row][col] === "") {
             board[row][col] = marker;
             return true;
@@ -16,32 +21,21 @@ const Gameboard = () => {
     };
 
     const checkWinner = () => {
-        const winCondition = [
-            [board[0][0], board[0][1], board[0][2]],
-            [board[1][0], board[1][1], board[1][2]],
-            [board[2][0], board[2][1], board[2][2]],
-            [board[0][0], board[1][0], board[2][0]],
-            [board[0][1], board[1][1], board[2][1]],
-            [board[0][2], board[1][2], board[2][2]],
-            [board[0][0], board[1][1], board[2][2]],
-            [board[0][2], board[1][1], board[2][0]],
-        ];
-
-        for (let line of winCondition) {
-            if (line[0] !== "" && line[0] === line[1] && line[1] === line[2]) {
-                return line[0];
-            }
+        for (let i = 0; i < 3; i++) {
+            if (board[i][0] && board[i][0] === board[i][1] && board[i][1] === board[i][2]) return board[i][0];
+            if (board[0][i] && board[0][i] === board[1][i] && board[1][i] === board[2][i]) return board[0][i];
         }
-
-        return board.flat().includes("") ? null : "draw";
+        if (board[1][1] && 
+            ((board[0][0] === board[1][1] && board[1][1] === board[2][2]) || 
+             (board[0][2] === board[1][1] && board[1][1] === board[2][0]))) {
+            return board[1][1];
+        }
+    
+        return board.some(row => row.includes("")) ? null : "draw";
     };
 
     const resetBoard = () => {
-        board = [
-            ["", "", ""],
-            ["", "", ""],
-            ["", "", ""]
-        ];
+        board.forEach(row => row.fill(""));
     };
 
     const printBoard = () => {
@@ -59,14 +53,17 @@ const Gameboard = () => {
     };
 };
 
-const Player = (name, marker) => {
-    return {name, marker};
-};
+class Player {
+    constructor(name, marker) {
+        this.name = name;
+        this.marker = marker;
+    }
+}
 
 const PlayGame = () => {
     const board = Gameboard();
-    const player1 = Player("Player 1", "X");
-    const player2 = Player("Player 2", "O");
+    const player1 = new Player("Player 1", "X");
+    const player2 = new Player("Player 2", "O");
     let currentPlayer = player1;
     let gameOver = false;
 
@@ -76,7 +73,7 @@ const PlayGame = () => {
 
     const playRound = (row, col) => {
         if (gameOver) {
-            return "Game Over! Start a new game";
+            return `Game over! ${currentPlayer} won :)`;
         }
 
         if (board.placeMarker(row, col, currentPlayer.marker)) {
@@ -102,8 +99,7 @@ const PlayGame = () => {
         board.resetBoard();
         currentPlayer = player1;
         gameOver = false;
-        console.log("New game started!\n");
-        startGame();
+        return "A new game has started.";
     };
 
     return {
